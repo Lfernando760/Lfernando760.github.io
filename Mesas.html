@@ -12,28 +12,31 @@
             padding: 0;
             background-color: #fff5f5;
             text-align: center;
+            overflow-x: auto; /* Permitir desplazamiento horizontal en pantallas pequeñas */
         }
         .container {
-            max-width: 900px;
+            max-width: 1000px;
             margin: 50px auto;
             padding: 30px;
             background: #fff;
             box-shadow: 0 0 15px rgba(0,0,0,0.2);
             border-radius: 10px;
+            box-sizing: border-box;
         }
         h1 {
             color: #b22222;
         }
         .seating-chart {
             display: grid;
-            grid-template-columns: repeat(4, 1fr);
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
             gap: 20px;
             justify-content: center;
             margin-top: 20px;
         }
         .seat {
-            width: 100px;
-            height: 100px;
+            width: 100%;
+            max-width: 120px;
+            height: 120px;
             border: 2px solid #ccc;
             border-radius: 50%;
             display: flex;
@@ -53,7 +56,6 @@
             background-color: #00ced1;
         }
         .seat-text {
-            margin-top: 10px;
             font-size: 18px;
             font-weight: bold;
             color: #333;
@@ -68,87 +70,36 @@
             cursor: pointer;
             margin-top: 20px;
         }
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+                margin: 20px;
+            }
+            .seating-chart {
+                grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            }
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>Selecciona una Mesa</h1>
         <div class="seating-chart">
-            <a href="Mesa copy 1.html">
-                <div class="seat">
-                    <img src="mesasasas.jpeg" alt="Mesa 1">
-                </div>
-                <div class="seat-text">Mesa 1</div>
-            </a>
-            <a href="Mesa  copy 2.html">
-                <div class="seat">
-                    <img src="mesasasas.jpeg" alt="Mesa 2">
-                </div>
-                <div class="seat-text">Mesa 2</div>
-            </a>
-            <a href="Mesa1 copy 3.html">
-                <div class="seat">
-                    <img src="mesasasas.jpeg" alt="Mesa 3">
-                </div>
-                <div class="seat-text">Mesa 3</div>
-            </a>
-            <a href="Mesa1 copy 4.html">
-                <div class="seat">
-                    <img src="mesasasas.jpeg" alt="Mesa 4">
-                </div>
-                <div class="seat-text">Mesa 4</div>
-            </a>
-            <a href="Mesa1 copy 5.html">
-                <div class="seat">
-                    <img src="mesasasas.jpeg" alt="Mesa 5">
-                </div>
-                <div class="seat-text">Mesa 5</div>
-            </a>
-            <a href="Mesa1 copy 6.html">
-                <div class="seat">
-                    <img src="mesasasas.jpeg" alt="Mesa 6">
-                </div>
-                <div class="seat-text">Mesa 6</div>
-            </a>
-            <a href="Mesa1 copy 7.html">
-                <div class="seat">
-                    <img src="mesasasas.jpeg" alt="Mesa 7">
-                </div>
-                <div class="seat-text">Mesa 7</div>
-            </a>
-            <a href="Mesa1 copy 8.html">
-                <div class="seat">
-                    <img src="mesasasas.jpeg" alt="Mesa 8">
-                </div>
-                <div class="seat-text">Mesa 8</div>
-            </a>
-            <a href="Mesa1 copy 9.html">
-                <div class="seat">
-                    <img src="mesasasas.jpeg" alt="Mesa 9">
-                </div>
-                <div class="seat-text">Mesa 9</div>
-            </a>
-            <a href="Mesa1 copy 10.html">
-                <div class="seat">
-                    <img src="mesasasas.jpeg" alt="Mesa 10">
-                </div>
-                <div class="seat-text">Mesa 10</div>
-            </a>
-            <a href="Mesa1 copy 11.html">
-                <div class="seat">
-                    <img src="mesasasas.jpeg" alt="Mesa 11">
-                </div>
-                <div class="seat-text">Mesa 11</div>
-            </a>
-            <a href="Mesa1 copy 12.html">
-                <div class="seat">
-                    <img src="mesasasas.jpeg" alt="Mesa 12">
-                </div>
-                <div class="seat-text">Mesa 12</div>
-            </a>
-     
+            <!-- Generación de mesas dinámica -->
+            <script>
+                for (let i = 1; i <= 12; i++) {
+                    document.write(`
+                        <a href="Mesa${i}.html">
+                            <div class="seat">
+                                <img src="mesasasas.jpeg" alt="Mesa ${i}">
+                            </div>
+                            <div class="seat-text">Mesa ${i}</div>
+                        </a>
+                    `);
+                }
+            </script>
         </div>
-        <a href="index.html">
+        <a href="Index.html">
             <button class="btn-back">Regresar</button>
         </a>
     </div>
