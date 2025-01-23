@@ -15,28 +15,26 @@
             overflow-x: auto; /* Permitir desplazamiento horizontal en pantallas pequeñas */
         }
         .container {
-            max-width: 1000px;
+            max-width: 900px;
             margin: 50px auto;
             padding: 30px;
             background: #fff;
             box-shadow: 0 0 15px rgba(0,0,0,0.2);
             border-radius: 10px;
-            box-sizing: border-box;
         }
         h1 {
             color: #b22222;
         }
         .seating-chart {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            grid-template-columns: repeat(4, 1fr);
             gap: 20px;
             justify-content: center;
             margin-top: 20px;
         }
         .seat {
-            width: 100%;
-            max-width: 120px;
-            height: 120px;
+            width: 100px;
+            height: 100px;
             border: 2px solid #ccc;
             border-radius: 50%;
             display: flex;
@@ -56,6 +54,7 @@
             background-color: #00ced1;
         }
         .seat-text {
+            margin-top: 10px;
             font-size: 18px;
             font-weight: bold;
             color: #333;
@@ -70,19 +69,10 @@
             cursor: pointer;
             margin-top: 20px;
         }
-        @media (max-width: 768px) {
-            .container {
-                padding: 20px;
-                margin: 20px;
-            }
-            .seating-chart {
-                grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
-            }
-        }
     </style>
 </head>
 <body>
-   <div class="container">
+    <div class="container">
         <h1>Selecciona una Mesa</h1>
         <div class="seating-chart">
             <a href="Mesa1.html">
@@ -165,4 +155,3 @@
     </div>
 </body>
 </html>
- 
