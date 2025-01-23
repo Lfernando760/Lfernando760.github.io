@@ -25,11 +25,19 @@
             align-items: center;
             height: 100vh;
             background: url('ruta/a/tu/imagen.jpg') no-repeat center center/cover;
+            background-size: cover;
             padding-bottom: 50px;
         }
         .event-info {
             text-align: center;
             color: white;
+            max-width: 90%;
+        }
+        .event-info img {
+            width: 100%;
+            height: auto;
+            max-width: 400px;
+            margin: 0 auto;
         }
         .btn {
             display: block;
@@ -50,9 +58,33 @@
             text-align: center;
             padding: 5px;
             font-size: 14px;
-            position: fixed;
-            bottom: 0;
-            width: 100%;
+        }
+
+        /* Media Queries para dispositivos móviles */
+        @media (max-width: 768px) {
+            header {
+                font-size: 20px;
+            }
+            .container {
+                padding: 20px 0;
+                height: auto;
+            }
+            .event-info {
+                padding: 20px;
+            }
+            .btn {
+                font-size: 16px;
+                padding: 12px 25px;
+            }
+        }
+        @media (max-width: 480px) {
+            header {
+                font-size: 18px;
+            }
+            .btn {
+                font-size: 14px;
+                padding: 10px 20px;
+            }
         }
     </style>
 </head>
@@ -63,7 +95,7 @@
     </header>
     <div class="container">
         <div class="event-info">
-            <img src="Voletin.jpeg" alt="Evento" width="400" height="650">
+            <img src="Voletin.jpeg" alt="Evento">
             <a href="Mesas.html" class="btn">Elegir Mesa</a>
             <a href="Infromacion.html" class="btn">Ver Información</a>
         </div>
