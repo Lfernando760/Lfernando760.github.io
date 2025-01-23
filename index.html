@@ -11,115 +11,48 @@
             margin: 0;
             padding: 0;
             background-color: #fff5f5;
-            display: flex;
-            flex-direction: column;
-            height: 100vh;
         }
-
         header {
             background: #b22222;
             color: #fff;
-            padding: 20px;
+            padding: 15px;
             text-align: center;
-            font-size: 2rem;
-            flex-shrink: 0;
+            font-size: 24px;
         }
-
         .container {
             display: flex;
             justify-content: center;
             align-items: center;
-            flex-grow: 1;
+            height: 100vh;
             background: url('ruta/a/tu/imagen.jpg') no-repeat center center/cover;
-            background-size: cover;
-            padding: 40px;
-            text-align: center;
-            height: 100%;
+            padding-bottom: 50px;
         }
-
         .event-info {
+            text-align: center;
             color: white;
-            max-width: 500px;
-            width: 100%;
-            margin: 0 auto;
-            padding: 10px;
-            background: rgba(0, 0, 0, 0.5); /* Fondo semi-transparente para que el texto se vea bien */
-            border-radius: 10px;
         }
-
-        .event-info img {
-            width: 100%;
-            height: auto;
-            max-width: 400px;
-            margin-bottom: 20px;
-            border-radius: 10px;
-        }
-
         .btn {
             display: block;
             margin: 15px auto;
-            padding: 12px 25px;
+            padding: 10px 20px;
             background: #b22222;
             color: #fff;
             text-decoration: none;
             border-radius: 5px;
-            font-size: 1.2rem;
-            transition: background 0.3s;
+            font-size: 18px;
         }
-
         .btn:hover {
             background: #8b0000;
         }
-
         footer {
             background: #8b0000;
             color: #fff;
             text-align: center;
-            padding: 10px;
-            font-size: 1rem;
-            flex-shrink: 0;
-        }
-
-        /* Media Queries */
-        @media (max-width: 768px) {
-            header {
-                font-size: 1.5rem;
-            }
-
-            .btn {
-                font-size: 1rem;
-                padding: 12px 20px;
-            }
-
-            .container {
-                flex-direction: column;
-                justify-content: center;
-                height: auto;
-            }
-
-            .event-info {
-                margin-top: 20px;
-                width: 90%;
-            }
-
-            footer {
-                font-size: 0.9rem;
-            }
-        }
-
-        @media (max-width: 480px) {
-            header {
-                font-size: 1.2rem;
-            }
-
-            .btn {
-                font-size: 0.9rem;
-                padding: 10px 15px;
-            }
-
-            .container {
-                padding: 10px;
-            }
+            padding: 5px;
+            font-size: 14px;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
         }
     </style>
 </head>
@@ -130,7 +63,7 @@
     </header>
     <div class="container">
         <div class="event-info">
-            <img src="Voletin.jpeg" alt="Evento">
+            <img src="Voletin.jpeg" alt="Evento" width="400" height="650">
             <a href="Mesas.html" class="btn">Elegir Mesa</a>
             <a href="Infromacion.html" class="btn">Ver Información</a>
         </div>
