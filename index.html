@@ -1,75 +1,63 @@
 <!DOCTYPE html>
 <html lang="es">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' https://lfernando760.github.io;">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Velada Romántica</title>
+    <title>Velada Romantica</title>
+    <link rel="stylesheet" href="styles.css">
     <style>
         body {
             font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
             background-color: #fff5f5;
-        }
-        header {
-            background: #b22222;
-            color: #fff;
-            padding: 15px;
             text-align: center;
-            font-size: 24px;
-        }
-        .container {
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
-            background: url('ruta/a/tu/imagen.jpg') no-repeat center center/cover;
-            padding-bottom: 50px;
+            min-height: 100vh;
         }
-        .event-info {
+        .container {
+            max-width: 900px;
+            padding: 30px;
+            background: #fff;
+            box-shadow: 0 0 15px rgba(0,0,0,0.2);
+            border-radius: 10px;
             text-align: center;
-            color: white;
         }
-        .btn {
-            display: block;
-            margin: 15px auto;
-            padding: 10px 20px;
-            background: #b22222;
-            color: #fff;
-            text-decoration: none;
+        h1 {
+            color: #b22222;
+        }
+        .btn-back {
+            background: #ffcc00;
+            padding: 15px 30px;
+            border: none;
             border-radius: 5px;
             font-size: 18px;
+            color: #333;
+            cursor: pointer;
+            margin-top: 20px;
         }
-        .btn:hover {
-            background: #8b0000;
-        }
-        footer {
-            background: #8b0000;
-            color: #fff;
-            text-align: center;
-            padding: 5px;
-            font-size: 14px;
-            position: fixed;
-            bottom: 0;
-            width: 100%;
+        .image-container {
+            margin-top: 20px;
         }
     </style>
 </head>
 <body>
-    <header>
-        <h1>Bienvenidos</h1>
-        <p>Parroquia San José, Naco, Sonora.</p>
-    </header>
+    
     <div class="container">
-        <div class="event-info">
-            <img src="Voletin.jpeg" alt="Evento" width="400" height="650">
-            <a href="Mesas.html" class="btn">Elegir Mesa</a>
-            <a href="Infromacion.html" class="btn">Ver Información</a>
+        <h1>Bienvenidos</h1>
+    <p>Parroquia San José, Naco, Sonora.</p>
+        <div class="image-container">
+            <img src="Voletin.jpeg" alt="Descripción de la imagen" width="400" height="600">
+        </div>
+        <div class="button-container">
+            <a href="Mesas.html">
+                <button class="btn-back">Ver mesas</button>
+                <a href="Infromacion.html">
+                    <button class="btn-back">Ver Infromacion</button>
+            </a>
         </div>
     </div>
-    <footer>
-        &copy; 2025 Parroquia San José
-    </footer>
 </body>
 </html>
