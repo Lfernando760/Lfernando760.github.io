@@ -4,177 +4,116 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Velada Romántica</title>
-    <link rel="stylesheet" href="styles.css">
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #fff5f5;
-            text-align: center;
-        }
-        .container {
-            max-width: 900px;
-            margin: 50px auto;
-            padding: 30px;
-            background: #fff;
-            box-shadow: 0 0 15px rgba(0,0,0,0.2);
-            border-radius: 10px;
-        }
-        h1 {
-            color: #b22222;
-        }
-        .seating-chart {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 10px;
-            justify-content: center;
-        }
         .seat {
             width: 60px;
             height: 60px;
             border: 2px solid #ccc;
             border-radius: 50%;
-            display: flex;
+            display: inline-flex;
             align-items: center;
             justify-content: center;
             font-size: 16px;
             cursor: pointer;
             transition: background-color 0.3s;
-            position: relative;
+            margin: 5px;
         }
-        .available {
-            background-color: #fff;
-        }
-        .occupied {
-            background-color: #333;
-            color: #fff;
-            cursor: not-allowed;
-        }
-        .selected {
-            background-color: #00ced1;
-        }
-        .available:hover {
-            background-color: #87CEFA;
-        }
-        .legend {
-            margin-top: 20px;
-        }
-        .legend span {
-            display: inline-block;
-            margin-right: 15px;
-        }
-        .legend .box {
-            width: 20px;
-            height: 20px;
-            display: inline-block;
-            border: 1px solid #333;
-        }
-        .btn-back {
-            background: #ffcc00;
-            padding: 15px 30px;
-            border: none;
-            border-radius: 5px;
-            font-size: 18px;
-            color: #333;
-            cursor: pointer;
-            margin-top: 20px;
-        }
-        .tooltip {
-            position: absolute;
-            background-color: rgba(0, 0, 0, 0.8);
-            color: #fff;
-            padding: 5px 10px;
-            border-radius: 5px;
-            font-size: 14px;
-            white-space: nowrap;
-            top: -30px;
-            left: 50%;
-            transform: translateX(-50%);
-            display: none;
-        }
-        .seat:hover .tooltip {
-            display: block;
-        }
+        .available { background-color: #fff; }
+        .occupied { background-color: #333; color: #fff; cursor: not-allowed; }
+        .selected { background-color: #00ced1; }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Selecciona tus asientos</h1>
-        <div class="seating-chart" id="seating-chart"></div>
-        <div class="legend">
-            <span><div class="box available"></div> Disponible</span>
-            <span><div class="box occupied"></div> Ocupado</span>
-            <span><div class="box selected"></div> Seleccionado</span>
-        </div>
-        
-        <a href="Mesas.html">
-            <button class="btn-back">Regresar</button>
-        </a>
-    </div>
+    <h1>Selecciona tus asientos</h1>
+    <div id="seating-chart"></div>
 
-    <script>
-        let isAdmin = false;
+    <script type="module">
+        // Importar Firebase
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-app.js";
+        import { getFirestore, doc, getDoc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-firestore.js";
+
+        // Configuración de Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyAeSHr1HjyaLBaY-H47y0LleeG99w8dRcc",
+            authDomain: "velada-255a6.firebaseapp.com",
+            projectId: "velada-255a6",
+            storageBucket: "velada-255a6.appspot.com",
+            messagingSenderId: "604033105183",
+            appId: "1:604033105183:web:1b80a81c207b25b3f9842a",
+            measurementId: "G-7GZMGGX0W3"
+        };
+
+        // Inicializar Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // Obtener el contenedor de los asientos
         const seatingChart = document.getElementById('seating-chart');
+        const pageId = "mesa8"; // ID de la mesa en Firestore
 
-        // Cargar los datos guardados
-        const savedSeats = JSON.parse(localStorage.getItem('seats')) || {};
+        // Referencia a la mesa en Firestore
+        const seatsRef = doc(db, "asientos", pageId);
 
-        for (let i = 1; i <= 8; i++) {
-            let seat = document.createElement('div');
-            seat.classList.add('seat');
-            seat.textContent = i;
-            seat.setAttribute('data-info', savedSeats[i] ? savedSeats[i] : 'Disponible');
+        // Escuchar cambios en tiempo real
+        onSnapshot(seatsRef, (snapshot) => {
+            const savedSeats = snapshot.exists() ? snapshot.data() : {};
 
-            if (savedSeats[i]) {
-                seat.classList.add('occupied');
-                seat.style.cursor = 'not-allowed';
-            } else {
-                seat.classList.add('available');
-            }
+            // Limpiar contenido antes de renderizar
+            seatingChart.innerHTML = ""; 
 
-            let tooltip = document.createElement('div');
-            tooltip.classList.add('tooltip');
-            tooltip.textContent = seat.getAttribute('data-info');
-            seat.appendChild(tooltip);
+            for (let i = 1; i <= 8; i++) {
+                let seat = document.createElement('div');
+                seat.classList.add('seat');
+                seat.textContent = i;
 
-            seat.addEventListener('click', function() {
-                if (!isAdmin) {
+                // Verificar si el asiento está ocupado o disponible
+                if (savedSeats[`asiento${i}`]) {
+                    seat.classList.add('occupied');
+                    seat.setAttribute('data-info', savedSeats[`asiento${i}`]);
+                    seat.style.cursor = 'not-allowed';
+                } else {
+                    seat.classList.add('available');
+                    seat.setAttribute('data-info', 'Disponible');
+                }
+
+                // Tooltip para mostrar información del asiento
+                seat.title = seat.getAttribute('data-info');
+
+                // Evento para seleccionar un asiento
+                seat.addEventListener('click', function () {
                     if (seat.classList.contains('occupied')) {
                         alert(seat.getAttribute('data-info'));
                     } else {
                         seat.classList.toggle('selected');
                     }
-                }
-            });
+                });
 
-            seat.addEventListener('dblclick', function() {
-                if (!isAdmin) {
+                // Evento para comprar asiento (doble clic)
+                seat.addEventListener('dblclick', async function () {
                     let password = prompt("Introduce la clave de administrador");
                     if (password === "admin123") {
-                        isAdmin = true;
-                        alert("Modo administrador activado");
+                        let newName = prompt("Introduce el nombre del comprador:", seat.getAttribute('data-info'));
+                        if (newName) {
+                            seat.setAttribute('data-info', `Comprado por: ${newName}`);
+                            seat.title = `Comprado por: ${newName}`;
+                            seat.classList.remove('available');
+                            seat.classList.add('occupied');
+                            seat.style.cursor = 'not-allowed';
+
+                            // Guardar la información del asiento en Firestore
+                            await setDoc(seatsRef, {
+                                ...savedSeats,
+                                [`asiento${i}`]: `Comprado por: ${newName}`
+                            });
+                        }
                     } else {
                         alert("Clave incorrecta");
                     }
-                } else {
-                    let newName = prompt("Introduce el nombre del comprador:", seat.getAttribute('data-info'));
-                    if (newName) {
-                        seat.setAttribute('data-info', `Comprado por: ${newName}`);
-                        tooltip.textContent = `Comprado por: ${newName}`;
-                        seat.classList.remove('available');
-                        seat.classList.add('occupied');
-                        seat.style.cursor = 'not-allowed';
-                        
-                        // Guardar en localStorage
-                        savedSeats[i] = `Comprado por: ${newName}`;
-                        localStorage.setItem('seats', JSON.stringify(savedSeats));
-                    }
-                }
-            });
+                });
 
-            seatingChart.appendChild(seat);
-        }
+                seatingChart.appendChild(seat);
+            }
+        });
     </script>
 </body>
 </html>
