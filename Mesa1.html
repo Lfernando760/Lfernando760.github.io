@@ -107,74 +107,92 @@
             <span><div class="box occupied"></div> Ocupado</span>
             <span><div class="box selected"></div> Seleccionado</span>
         </div>
-        
         <a href="Mesas.html">
             <button class="btn-back">Regresar</button>
         </a>
     </div>
 
-    <script>
-        let isAdmin = false;
+    <script type="module">
+        // Importar Firebase
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-app.js";
+        import { getFirestore, doc, getDoc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-firestore.js";
+
+        // Configuración de Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyAeSHr1HjyaLBaY-H47y0LleeG99w8dRcc",
+            authDomain: "velada-255a6.firebaseapp.com",
+            projectId: "velada-255a6",
+            storageBucket: "velada-255a6.appspot.com",
+            messagingSenderId: "604033105183",
+            appId: "1:604033105183:web:1b80a81c207b25b3f9842a",
+            measurementId: "G-7GZMGGX0W3"
+        };
+
+        // Inicializar Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
         const seatingChart = document.getElementById('seating-chart');
+        const pageId = "mesa10"; // ID de la mesa o grupo de asientos
 
-        // Cargar los datos guardados
-        const savedSeats = JSON.parse(localStorage.getItem('seats')) || {};
+        // Escuchar cambios en tiempo real en Firestore
+        const seatsRef = doc(db, "asientos", pageId);
+        onSnapshot(seatsRef, (snapshot) => {
+            const savedSeats = snapshot.exists() ? snapshot.data() : {};
 
-        for (let i = 1; i <= 8; i++) {
-            let seat = document.createElement('div');
-            seat.classList.add('seat');
-            seat.textContent = i;
-            seat.setAttribute('data-info', savedSeats[i] ? savedSeats[i] : 'Disponible');
+            seatingChart.innerHTML = ""; // Limpiar el contenido antes de renderizar
 
-            if (savedSeats[i]) {
-                seat.classList.add('occupied');
-                seat.style.cursor = 'not-allowed';
-            } else {
-                seat.classList.add('available');
-            }
+            for (let i = 1; i <= 8; i++) {
+                let seat = document.createElement('div');
+                seat.classList.add('seat');
+                seat.textContent = i;
+                seat.setAttribute('data-info', savedSeats[i] ? savedSeats[i] : 'Disponible');
 
-            let tooltip = document.createElement('div');
-            tooltip.classList.add('tooltip');
-            tooltip.textContent = seat.getAttribute('data-info');
-            seat.appendChild(tooltip);
+                if (savedSeats[i]) {
+                    seat.classList.add('occupied');
+                    seat.style.cursor = 'not-allowed';
+                } else {
+                    seat.classList.add('available');
+                }
 
-            seat.addEventListener('click', function() {
-                if (!isAdmin) {
+                let tooltip = document.createElement('div');
+                tooltip.classList.add('tooltip');
+                tooltip.textContent = seat.getAttribute('data-info');
+                seat.appendChild(tooltip);
+
+                seat.addEventListener('click', function () {
                     if (seat.classList.contains('occupied')) {
                         alert(seat.getAttribute('data-info'));
                     } else {
                         seat.classList.toggle('selected');
                     }
-                }
-            });
+                });
 
-            seat.addEventListener('dblclick', function() {
-                if (!isAdmin) {
+                seat.addEventListener('dblclick', async function () {
                     let password = prompt("Introduce la clave de administrador");
                     if (password === "admin123") {
-                        isAdmin = true;
-                        alert("Modo administrador activado");
+                        let newName = prompt("Introduce el nombre del comprador:", seat.getAttribute('data-info'));
+                        if (newName) {
+                            seat.setAttribute('data-info', `Comprado por: ${newName}`);
+                            tooltip.textContent = `Comprado por: ${newName}`;
+                            seat.classList.remove('available');
+                            seat.classList.add('occupied');
+                            seat.style.cursor = 'not-allowed';
+
+                            // Guardar en Firestore
+                            await setDoc(seatsRef, { 
+                                ...savedSeats,
+                                [i]: `Comprado por: ${newName}`
+                            });
+                        }
                     } else {
                         alert("Clave incorrecta");
                     }
-                } else {
-                    let newName = prompt("Introduce el nombre del comprador:", seat.getAttribute('data-info'));
-                    if (newName) {
-                        seat.setAttribute('data-info', `Comprado por: ${newName}`);
-                        tooltip.textContent = `Comprado por: ${newName}`;
-                        seat.classList.remove('available');
-                        seat.classList.add('occupied');
-                        seat.style.cursor = 'not-allowed';
-                        
-                        // Guardar en localStorage
-                        savedSeats[i] = `Comprado por: ${newName}`;
-                        localStorage.setItem('seats', JSON.stringify(savedSeats));
-                    }
-                }
-            });
+                });
 
-            seatingChart.appendChild(seat);
-        }
+                seatingChart.appendChild(seat);
+            }
+        });
     </script>
 </body>
 </html>
