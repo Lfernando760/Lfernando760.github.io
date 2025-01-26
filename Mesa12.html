@@ -138,19 +138,9 @@
                     seat.setAttribute('data-info', 'Disponible');
                 }
 
-                let tooltip = document.createElement('div');
-                tooltip.classList.add('tooltip');
-                tooltip.textContent = seat.getAttribute('data-info');
-                seat.appendChild(tooltip);
-
-                seat.addEventListener('click', function () {
-                    if (!seat.classList.contains('occupied')) {
-                        seat.classList.toggle('selected');
-                    }
-                });
-
                 seat.addEventListener('dblclick', async function () {
-                    if (!seat.classList.contains('occupied')) {
+                    let password = prompt("Introduce la contraseña para modificar:");
+                    if (password === "admin123") {
                         let newName = prompt("Introduce el nombre del comprador:");
                         if (newName) {
                             await setDoc(seatsRef, {
@@ -158,6 +148,8 @@
                                 [`asiento${i}`]: `Comprado por: ${newName}`
                             });
                         }
+                    } else {
+                        alert("Contraseña incorrecta.");
                     }
                 });
 
