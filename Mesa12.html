@@ -46,6 +46,22 @@
         .occupied { background-color: #333; color: #fff; cursor: not-allowed; }
         .selected { background-color: #00ced1; }
         .available:hover { background-color: #87CEFA; }
+        .tooltip {
+            position: absolute;
+            background-color: rgba(0, 0, 0, 0.8);
+            color: #fff;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 14px;
+            white-space: nowrap;
+            top: -30px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: none;
+        }
+        .seat:hover .tooltip {
+            display: block;
+        }
         .legend {
             margin-top: 20px;
         }
@@ -68,22 +84,6 @@
             color: #333;
             cursor: pointer;
             margin-top: 20px;
-        }
-        .tooltip {
-            position: absolute;
-            background-color: rgba(0, 0, 0, 0.8);
-            color: #fff;
-            padding: 5px 10px;
-            border-radius: 5px;
-            font-size: 14px;
-            white-space: nowrap;
-            top: -30px;
-            left: 50%;
-            transform: translateX(-50%);
-            display: none;
-        }
-        .seat:hover .tooltip {
-            display: block;
         }
     </style>
 </head>
@@ -130,13 +130,16 @@
                 seat.classList.add('seat');
                 seat.textContent = i;
 
+                let tooltip = document.createElement('div');
+                tooltip.classList.add('tooltip');
+                seat.appendChild(tooltip);
+
                 if (savedSeats[`asiento${i}`]) {
                     seat.classList.add('occupied');
-                    seat.setAttribute('data-info', savedSeats[`asiento${i}`]);
-                    seat.addEventListener('click', () => alert(seat.getAttribute('data-info')));
+                    tooltip.textContent = savedSeats[`asiento${i}`];
                 } else {
                     seat.classList.add('available');
-                    seat.setAttribute('data-info', 'Disponible');
+                    tooltip.textContent = 'Disponible';
                 }
 
                 seat.addEventListener('dblclick', async function () {
