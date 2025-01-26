@@ -42,20 +42,10 @@
             transition: background-color 0.3s;
             position: relative;
         }
-        .available {
-            background-color: #fff;
-        }
-        .occupied {
-            background-color: #333;
-            color: #fff;
-            cursor: not-allowed;
-        }
-        .selected {
-            background-color: #00ced1;
-        }
-        .available:hover {
-            background-color: #87CEFA;
-        }
+        .available { background-color: #fff; }
+        .occupied { background-color: #333; color: #fff; cursor: not-allowed; }
+        .selected { background-color: #00ced1; }
+        .available:hover { background-color: #87CEFA; }
         .legend {
             margin-top: 20px;
         }
@@ -113,7 +103,7 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-app.js";
-        import { getFirestore, doc, getDoc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-firestore.js";
+        import { getFirestore, doc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyAeSHr1HjyaLBaY-H47y0LleeG99w8dRcc",
@@ -139,6 +129,7 @@
                 let seat = document.createElement('div');
                 seat.classList.add('seat');
                 seat.textContent = i;
+
                 if (savedSeats[`asiento${i}`]) {
                     seat.classList.add('occupied');
                     seat.setAttribute('data-info', savedSeats[`asiento${i}`]);
@@ -152,15 +143,27 @@
                 tooltip.textContent = seat.getAttribute('data-info');
                 seat.appendChild(tooltip);
 
-                seat.addEventListener('click', () => {
+                seat.addEventListener('click', function () {
                     if (!seat.classList.contains('occupied')) {
                         seat.classList.toggle('selected');
                     }
                 });
 
+                seat.addEventListener('dblclick', async function () {
+                    if (!seat.classList.contains('occupied')) {
+                        let newName = prompt("Introduce el nombre del comprador:");
+                        if (newName) {
+                            await setDoc(seatsRef, {
+                                ...savedSeats,
+                                [`asiento${i}`]: `Comprado por: ${newName}`
+                            });
+                        }
+                    }
+                });
+
                 seatingChart.appendChild(seat);
             }
-        }); 
+        });
     </script>
 </body>
 </html>
