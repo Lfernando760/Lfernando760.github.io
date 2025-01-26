@@ -133,6 +133,7 @@
                 if (savedSeats[`asiento${i}`]) {
                     seat.classList.add('occupied');
                     seat.setAttribute('data-info', savedSeats[`asiento${i}`]);
+                    seat.addEventListener('click', () => alert(seat.getAttribute('data-info')));
                 } else {
                     seat.classList.add('available');
                     seat.setAttribute('data-info', 'Disponible');
