@@ -128,7 +128,7 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
         const seatingChart = document.getElementById('seating-chart');
-        const pageId = "mesa1";
+        const pageId = "mesa2";
         const seatsRef = doc(db, "asientos", pageId);
 
         onSnapshot(seatsRef, (snapshot) => {
