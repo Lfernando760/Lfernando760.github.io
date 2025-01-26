@@ -116,18 +116,19 @@
         import { getFirestore, doc, getDoc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-firestore.js";
 
         const firebaseConfig = {
-            apiKey: "YOUR_API_KEY",
-            authDomain: "YOUR_AUTH_DOMAIN",
-            projectId: "YOUR_PROJECT_ID",
-            storageBucket: "YOUR_STORAGE_BUCKET",
-            messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
-            appId: "YOUR_APP_ID"
+            apiKey: "AIzaSyAeSHr1HjyaLBaY-H47y0LleeG99w8dRcc",
+            authDomain: "velada-255a6.firebaseapp.com",
+            projectId: "velada-255a6",
+            storageBucket: "velada-255a6.appspot.com",
+            messagingSenderId: "604033105183",
+            appId: "1:604033105183:web:1b80a81c207b25b3f9842a",
+            measurementId: "G-7GZMGGX0W3"
         };
 
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
         const seatingChart = document.getElementById('seating-chart');
-        const pageId = "mesa2";
+        const pageId = "mesa1";
         const seatsRef = doc(db, "asientos", pageId);
 
         onSnapshot(seatsRef, (snapshot) => {
@@ -144,22 +145,17 @@
                 } else {
                     seat.classList.add('available');
                     seat.setAttribute('data-info', 'Disponible');
+                    seat.addEventListener('click', async () => {
+                        const name = prompt("Ingrese el nombre del comprador:");
+                        if (name) {
+                            await setDoc(seatsRef, { [`asiento${i}`]: name }, { merge: true });
+                        }
+                    });
                 }
-
                 let tooltip = document.createElement('div');
                 tooltip.classList.add('tooltip');
                 tooltip.textContent = seat.getAttribute('data-info');
                 seat.appendChild(tooltip);
-
-                seat.addEventListener('click', async () => {
-                    if (seat.classList.contains('available')) {
-                        const buyerName = prompt("Ingrese el nombre del comprador:");
-                        if (buyerName) {
-                            await setDoc(seatsRef, { [`asiento${i}`]: buyerName }, { merge: true });
-                        }
-                    }
-                });
-
                 seatingChart.appendChild(seat);
             }
         });
