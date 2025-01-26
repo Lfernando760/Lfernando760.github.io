@@ -5,27 +5,101 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Velada Romántica</title>
     <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #fff5f5;
+            text-align: center;
+        }
+        .container {
+            max-width: 900px;
+            margin: 50px auto;
+            padding: 30px;
+            background: #fff;
+            box-shadow: 0 0 15px rgba(0,0,0,0.2);
+            border-radius: 10px;
+        }
+        h1 {
+            color: #b22222;
+        }
+        .seating-chart {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            justify-content: center;
+        }
         .seat {
             width: 60px;
             height: 60px;
             border: 2px solid #ccc;
             border-radius: 50%;
-            display: inline-flex;
+            display: flex;
             align-items: center;
             justify-content: center;
             font-size: 16px;
             cursor: pointer;
             transition: background-color 0.3s;
-            margin: 5px;
+            position: relative;
         }
         .available { background-color: #fff; }
         .occupied { background-color: #333; color: #fff; cursor: not-allowed; }
         .selected { background-color: #00ced1; }
+        .available:hover { background-color: #87CEFA; }
+        .legend {
+            margin-top: 20px;
+        }
+        .legend span {
+            display: inline-block;
+            margin-right: 15px;
+        }
+        .legend .box {
+            width: 20px;
+            height: 20px;
+            display: inline-block;
+            border: 1px solid #333;
+        }
+        .btn-back {
+            background: #ffcc00;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 5px;
+            font-size: 18px;
+            color: #333;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+        .tooltip {
+            position: absolute;
+            background-color: rgba(0, 0, 0, 0.8);
+            color: #fff;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 14px;
+            white-space: nowrap;
+            top: -30px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: none;
+        }
+        .seat:hover .tooltip {
+            display: block;
+        }
     </style>
 </head>
 <body>
-    <h1>Selecciona tus asientos</h1>
-    <div id="seating-chart"></div>
+    <div class="container">
+        <h1>Selecciona tus asientos</h1>
+        <div class="seating-chart" id="seating-chart"></div>
+        <div class="legend">
+            <span><div class="box available"></div> Disponible</span>
+            <span><div class="box occupied"></div> Ocupado</span>
+            <span><div class="box selected"></div> Seleccionado</span>
+        </div>
+        <a href="Mesas.html">
+            <button class="btn-back">Regresar</button>
+        </a>
+    </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-app.js";
@@ -44,7 +118,7 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
         const seatingChart = document.getElementById('seating-chart');
-        const pageId = "mesa3"; 
+        const pageId = "mesa3";
         const seatsRef = doc(db, "asientos", pageId);
 
         onSnapshot(seatsRef, (snapshot) => {
@@ -59,44 +133,30 @@
                 if (savedSeats[`asiento${i}`]) {
                     seat.classList.add('occupied');
                     seat.setAttribute('data-info', savedSeats[`asiento${i}`]);
-                    seat.style.cursor = 'not-allowed';
                 } else {
                     seat.classList.add('available');
                     seat.setAttribute('data-info', 'Disponible');
                 }
 
-                seat.title = seat.getAttribute('data-info');
+                let tooltip = document.createElement('div');
+                tooltip.classList.add('tooltip');
+                tooltip.textContent = seat.getAttribute('data-info');
+                seat.appendChild(tooltip);
 
-                // Evento para seleccionar asiento
                 seat.addEventListener('click', function () {
-                    if (seat.classList.contains('occupied')) {
-                        alert(seat.getAttribute('data-info'));
-                    } else {
+                    if (!seat.classList.contains('occupied')) {
                         seat.classList.toggle('selected');
                     }
                 });
 
-                // Evento para comprar asiento (doble clic)
                 seat.addEventListener('dblclick', async function () {
                     if (!seat.classList.contains('occupied')) {
-                        seat.classList.remove('available');
-                        seat.classList.add('occupied');
-                        seat.style.cursor = 'not-allowed';
-
                         let newName = prompt("Introduce el nombre del comprador:");
                         if (newName) {
-                            seat.setAttribute('data-info', `Comprado por: ${newName}`);
-                            seat.title = `Comprado por: ${newName}`;
-
                             await setDoc(seatsRef, {
                                 ...savedSeats,
                                 [`asiento${i}`]: `Comprado por: ${newName}`
                             });
-                        } else {
-                            alert("No se ingresó ningún nombre, el asiento sigue disponible.");
-                            seat.classList.remove('occupied');
-                            seat.classList.add('available');
-                            seat.style.cursor = 'pointer';
                         }
                     }
                 });
