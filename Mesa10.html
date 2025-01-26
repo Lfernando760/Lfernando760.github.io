@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Velada Romántica</title>
-    <link rel="stylesheet" href="styles.css">
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -43,20 +42,10 @@
             transition: background-color 0.3s;
             position: relative;
         }
-        .available {
-            background-color: #fff;
-        }
-        .occupied {
-            background-color: #333;
-            color: #fff;
-            cursor: not-allowed;
-        }
-        .selected {
-            background-color: #00ced1;
-        }
-        .available:hover {
-            background-color: #87CEFA;
-        }
+        .available { background-color: #fff; }
+        .occupied { background-color: #333; color: #fff; cursor: not-allowed; }
+        .selected { background-color: #00ced1; }
+        .available:hover { background-color: #87CEFA; }
         .legend {
             margin-top: 20px;
         }
@@ -107,74 +96,74 @@
             <span><div class="box occupied"></div> Ocupado</span>
             <span><div class="box selected"></div> Seleccionado</span>
         </div>
-        
         <a href="Mesas.html">
             <button class="btn-back">Regresar</button>
         </a>
     </div>
 
-    <script>
-        let isAdmin = false;
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-app.js";
+        import { getFirestore, doc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyAeSHr1HjyaLBaY-H47y0LleeG99w8dRcc",
+            authDomain: "velada-255a6.firebaseapp.com",
+            projectId: "velada-255a6",
+            storageBucket: "velada-255a6.appspot.com",
+            messagingSenderId: "604033105183",
+            appId: "1:604033105183:web:1b80a81c207b25b3f9842a",
+            measurementId: "G-7GZMGGX0W3"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
         const seatingChart = document.getElementById('seating-chart');
+        const pageId = "mesa10";
+        const seatsRef = doc(db, "asientos", pageId);
 
-        // Cargar los datos guardados
-        const savedSeats = JSON.parse(localStorage.getItem('seats')) || {};
+        onSnapshot(seatsRef, (snapshot) => {
+            const savedSeats = snapshot.exists() ? snapshot.data() : {};
+            seatingChart.innerHTML = ""; 
 
-        for (let i = 1; i <= 8; i++) {
-            let seat = document.createElement('div');
-            seat.classList.add('seat');
-            seat.textContent = i;
-            seat.setAttribute('data-info', savedSeats[i] ? savedSeats[i] : 'Disponible');
+            for (let i = 1; i <= 8; i++) {
+                let seat = document.createElement('div');
+                seat.classList.add('seat');
+                seat.textContent = i;
 
-            if (savedSeats[i]) {
-                seat.classList.add('occupied');
-                seat.style.cursor = 'not-allowed';
-            } else {
-                seat.classList.add('available');
-            }
+                if (savedSeats[`asiento${i}`]) {
+                    seat.classList.add('occupied');
+                    seat.setAttribute('data-info', savedSeats[`asiento${i}`]);
+                } else {
+                    seat.classList.add('available');
+                    seat.setAttribute('data-info', 'Disponible');
+                }
 
-            let tooltip = document.createElement('div');
-            tooltip.classList.add('tooltip');
-            tooltip.textContent = seat.getAttribute('data-info');
-            seat.appendChild(tooltip);
+                let tooltip = document.createElement('div');
+                tooltip.classList.add('tooltip');
+                tooltip.textContent = seat.getAttribute('data-info');
+                seat.appendChild(tooltip);
 
-            seat.addEventListener('click', function() {
-                if (!isAdmin) {
-                    if (seat.classList.contains('occupied')) {
-                        alert(seat.getAttribute('data-info'));
-                    } else {
+                seat.addEventListener('click', function () {
+                    if (!seat.classList.contains('occupied')) {
                         seat.classList.toggle('selected');
                     }
-                }
-            });
+                });
 
-            seat.addEventListener('dblclick', function() {
-                if (!isAdmin) {
-                    let password = prompt("Introduce la clave de administrador");
-                    if (password === "admin123") {
-                        isAdmin = true;
-                        alert("Modo administrador activado");
-                    } else {
-                        alert("Clave incorrecta");
+                seat.addEventListener('dblclick', async function () {
+                    if (!seat.classList.contains('occupied')) {
+                        let newName = prompt("Introduce el nombre del comprador:");
+                        if (newName) {
+                            await setDoc(seatsRef, {
+                                ...savedSeats,
+                                [`asiento${i}`]: `Comprado por: ${newName}`
+                            });
+                        }
                     }
-                } else {
-                    let newName = prompt("Introduce el nombre del comprador:", seat.getAttribute('data-info'));
-                    if (newName) {
-                        seat.setAttribute('data-info', `Comprado por: ${newName}`);
-                        tooltip.textContent = `Comprado por: ${newName}`;
-                        seat.classList.remove('available');
-                        seat.classList.add('occupied');
-                        seat.style.cursor = 'not-allowed';
-                        
-                        // Guardar en localStorage
-                        savedSeats[i] = `Comprado por: ${newName}`;
-                        localStorage.setItem('seats', JSON.stringify(savedSeats));
-                    }
-                }
-            });
+                });
 
-            seatingChart.appendChild(seat);
-        }
+                seatingChart.appendChild(seat);
+            }
+        });
     </script>
 </body>
 </html>
