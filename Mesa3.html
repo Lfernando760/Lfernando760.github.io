@@ -28,11 +28,9 @@
     <div id="seating-chart"></div>
 
     <script type="module">
-        // Importar Firebase
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-app.js";
-        import { getFirestore, doc, getDoc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-firestore.js";
+        import { getFirestore, doc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-firestore.js";
 
-        // Configuración de Firebase
         const firebaseConfig = {
             apiKey: "AIzaSyAeSHr1HjyaLBaY-H47y0LleeG99w8dRcc",
             authDomain: "velada-255a6.firebaseapp.com",
@@ -43,22 +41,14 @@
             measurementId: "G-7GZMGGX0W3"
         };
 
-        // Inicializar Firebase
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
-
-        // Obtener el contenedor de los asientos
         const seatingChart = document.getElementById('seating-chart');
-        const pageId = "mesa3"; // ID de la mesa en Firestore
-
-        // Referencia a la mesa en Firestore
+        const pageId = "mesa3"; 
         const seatsRef = doc(db, "asientos", pageId);
 
-        // Escuchar cambios en tiempo real
         onSnapshot(seatsRef, (snapshot) => {
             const savedSeats = snapshot.exists() ? snapshot.data() : {};
-
-            // Limpiar contenido antes de renderizar
             seatingChart.innerHTML = ""; 
 
             for (let i = 1; i <= 8; i++) {
@@ -66,7 +56,6 @@
                 seat.classList.add('seat');
                 seat.textContent = i;
 
-                // Verificar si el asiento está ocupado o disponible
                 if (savedSeats[`asiento${i}`]) {
                     seat.classList.add('occupied');
                     seat.setAttribute('data-info', savedSeats[`asiento${i}`]);
@@ -76,10 +65,9 @@
                     seat.setAttribute('data-info', 'Disponible');
                 }
 
-                // Tooltip para mostrar información del asiento
                 seat.title = seat.getAttribute('data-info');
 
-                // Evento para seleccionar un asiento
+                // Evento para seleccionar asiento
                 seat.addEventListener('click', function () {
                     if (seat.classList.contains('occupied')) {
                         alert(seat.getAttribute('data-info'));
@@ -90,24 +78,26 @@
 
                 // Evento para comprar asiento (doble clic)
                 seat.addEventListener('dblclick', async function () {
-                    let password = prompt("Introduce la clave de administrador");
-                    if (password === "admin123") {
-                        let newName = prompt("Introduce el nombre del comprador:", seat.getAttribute('data-info'));
+                    if (!seat.classList.contains('occupied')) {
+                        seat.classList.remove('available');
+                        seat.classList.add('occupied');
+                        seat.style.cursor = 'not-allowed';
+
+                        let newName = prompt("Introduce el nombre del comprador:");
                         if (newName) {
                             seat.setAttribute('data-info', `Comprado por: ${newName}`);
                             seat.title = `Comprado por: ${newName}`;
-                            seat.classList.remove('available');
-                            seat.classList.add('occupied');
-                            seat.style.cursor = 'not-allowed';
 
-                            // Guardar la información del asiento en Firestore
                             await setDoc(seatsRef, {
                                 ...savedSeats,
                                 [`asiento${i}`]: `Comprado por: ${newName}`
                             });
+                        } else {
+                            alert("No se ingresó ningún nombre, el asiento sigue disponible.");
+                            seat.classList.remove('occupied');
+                            seat.classList.add('available');
+                            seat.style.cursor = 'pointer';
                         }
-                    } else {
-                        alert("Clave incorrecta");
                     }
                 });
 
