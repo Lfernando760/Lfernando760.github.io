@@ -59,9 +59,6 @@
             transform: translateX(-50%);
             display: none;
         }
-        .seat:hover .tooltip {
-            display: block;
-        }
         .legend {
             margin-top: 20px;
         }
@@ -142,6 +139,18 @@
                     tooltip.textContent = 'Disponible';
                 }
 
+                // Mostrar tooltip con un solo toque o clic
+                seat.addEventListener('click', function () {
+                    document.querySelectorAll('.tooltip').forEach(t => t.style.display = 'none');
+                    tooltip.style.display = 'block';
+
+                    // Ocultar después de 3 segundos
+                    setTimeout(() => {
+                        tooltip.style.display = 'none';
+                    }, 3000);
+                });
+
+                // Mantener funcionalidad de doble clic para edición
                 seat.addEventListener('dblclick', async function () {
                     let password = prompt("Introduce la contraseña para modificar:");
                     if (password === "admin123") {
